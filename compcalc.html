@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Percentage Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="w-full max-w-xl bg-white shadow-lg rounded-lg p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">Custom Percentage Proportion Calculator</h1>
+
+    <!-- Setup Form -->
+    <form id="setupForm" class="space-y-4">
+      <div>
+        <label for="numComponents" class="block text-sm font-medium text-gray-700">Number of Components:</label>
+        <input type="number" id="numComponents" min="1" step="1"
+               class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+               required>
+      </div>
+      <button type="button" id="setupButton"
+              class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700">
+        Set Up Components
+      </button>
+    </form>
+
+    <!-- Calculator Form -->
+    <form id="calculatorForm" class="space-y-4 mt-6 hidden">
+      <div id="componentsContainer" class="space-y-4"></div>
+
+      <div>
+        <label for="grams" class="block text-sm font-medium text-gray-700">Grams (for one component):</label>
+        <input type="number" id="grams" min="0" step="0.01"
+               class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+               required>
+      </div>
+
+      <div>
+        <label for="component" class="block text-sm font-medium text-gray-700">Known Component:</label>
+        <select id="component"
+                class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                required>
+        </select>
+      </div>
+
+      <button type="submit"
+              class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">
+        Calculate
+      </button>
+    </form>
+
+    <!-- Results -->
+    <div id="result" class="mt-6 text-gray-800"></div>
+  </div>
+
+  <script>
+    document.getElementById("setupButton").addEventListener("click", function () {
+      const numComponents = parseInt(document.getElementById("numComponents").value);
+      if (isNaN(numComponents) || numComponents < 1) {
+        alert("Please enter a valid number of components.");
+        return;
+      }
+
+      const container = document.getElementById("componentsContainer");
+      container.innerHTML = ""; // Clear any existing inputs
+      const componentSelect = document.getElementById("component");
+      componentSelect.innerHTML = ""; // Clear existing options
+
+      for (let i = 1; i <= numComponents; i++) {
+        const componentId = `component${i}`;
+        container.innerHTML += `
+          <div>
+            <label for="${componentId}" class="block text-sm font-medium text-gray-700">Component ${i} Percentage:</label>
+            <input type="number" id="${componentId}" min="0" max="100" step="0.01"
+                   class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                   required>
+          </div>
+        `;
+        componentSelect.innerHTML += `<option value="component${i}">Component ${i}</option>`;
+      }
+
+      document.getElementById("calculatorForm").classList.remove("hidden");
+    });
+
+    document.getElementById("calculatorForm").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const grams = parseFloat(document.getElementById("grams").value);
+      const selectedComponent = document.getElementById("component").value;
+
+      if (isNaN(grams) || grams <= 0) {
+        document.getElementById("result").innerHTML =
+          `<p class="text-red-600">Please enter a valid grams value.</p>`;
+        return;
+      }
+
+      const proportions = {};
+      let totalPercent = 0;
+
+      // Collect proportions
+      const componentInputs = document.querySelectorAll("#componentsContainer input");
+      componentInputs.forEach(input => {
+        const id = input.id;
+        const percent = parseFloat(input.value);
+        if (isNaN(percent) || percent < 0 || percent > 100) {
+          document.getElementById("result").innerHTML =
+            `<p class="text-red-600">Please enter valid percentages (0-100) for all components.</p>`;
+          return;
+        }
+        proportions[id] = percent;
+        totalPercent += percent;
+      });
+
+      if (totalPercent !== 100) {
+        document.getElementById("result").innerHTML =
+          `<p class="text-red-600">Percentages must add up to 100%.</p>`;
+        return;
+      }
+
+      const multiplier = grams / proportions[selectedComponent];
+      const masses = {};
+      for (const [component, percent] of Object.entries(proportions)) {
+        masses[component] = parseFloat((multiplier * percent).toFixed(2)); // Ensure result is a float
+      }
+
+      let resultHtml = `<p class="text-lg font-bold mb-2">Results:</p><ul class="list-disc pl-5 space-y-2">`;
+      for (const [component, mass] of Object.entries(masses)) {
+        resultHtml += `<li class="text-gray-700">${component.replace("component", "Component ")}: ${mass} grams</li>`;
+      }
+      resultHtml += `</ul>`;
+
+      document.getElementById("result").innerHTML = resultHtml;
+    });
+  </script>
+</body>
+</html>
