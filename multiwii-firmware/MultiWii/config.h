@@ -47,11 +47,13 @@
     //#define OCTOFLATX
     //#define FLYING_WING
     //#define VTAIL4
-    //#define AIRPLANE
+    #define AIRPLANE
     //#define SINGLECOPTER
     //#define DUALCOPTER
     //#define HELI_120_CCPM
     //#define HELI_90_DEG
+
+    #define GYRO_SCALE 1
 
   /****************************    Motor minthrottle    *******************************/
     /* Set the minimum throttle command sent to the ESC (Electronic Speed Controller)
@@ -114,7 +116,7 @@
       //#define SIRIUS_AIR      // Sirius Navigator IMU 6050 32U4 from MultiWiiCopter.com           <- confirmed by Alex
       //#define SIRIUS_AIR_GPS  // Sirius Navigator IMU 6050 32U4 from MultiWiiCopter.com with GPS/MAG remote located
       //#define SIRIUS_MEGAv5_OSD //  Paris_Sirius™ ITG3050,BMA280,MS5611,HMC5883,uBlox  http://www.Multiwiicopter.com <- confirmed by Alex
-      //#define MINIWII         // Jussi's MiniWii Flight Controller                                <- confirmed by Alex
+      // #define MINIWII         // Jussi's MiniWii Flight Controller                                <- confirmed by Alex
       //#define MICROWII        // MicroWii 10DOF with ATmega32u4, MPU6050, HMC5883L, MS561101BA from http://flyduino.net/
       //#define CITRUSv2_1      // CITRUS from qcrc.ca
       //#define CHERRY6DOFv1_0
@@ -169,7 +171,7 @@
       //#define ITG3200
       //#define MPU3050
       //#define L3G4200D
-      //#define MPU6050       //combo + ACC
+      #define MPU6050       //combo + ACC
       //#define LSM330        //combo + ACC
       
       /* I2C accelerometer */
